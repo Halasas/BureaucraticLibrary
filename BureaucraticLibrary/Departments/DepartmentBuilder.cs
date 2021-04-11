@@ -8,13 +8,6 @@ namespace BureaucraticLibrary.Departments
 
         public int NumberOfDepartments { get; }
         public int NumberOfStamps { get; }
-        public int ConditionIndex { get; private set; }
-        public int FirstStampIndex { get; private set; }
-        public int FirstEraseIndex { get; private set; }
-        public int FirstNextDepartmentIndex { get; private set; }
-        public int SecondStampIndex { get; private set; }
-        public int SecondEraseIndex { get; private set; }
-        public int SecondNextDepartmentIndex { get; private set; }
 
         public DepartmentBuilder(int numberOfDepartments, int numberOfStamps)
         {
@@ -28,71 +21,32 @@ namespace BureaucraticLibrary.Departments
             }
             NumberOfDepartments = numberOfDepartments;
             NumberOfStamps = numberOfStamps;
-
-            Reset();
         }
 
-        public DepartmentBuilder SetCondition(int index)
-        {
-            if (index < 0 || index > NumberOfStamps)
-            {
-                throw new ArgumentException("Index out of range");
-            }
-            ConditionIndex = index;
-            return this;
-        }
-        public DepartmentBuilder SetBehavior(int stampIndex, int eraseIndex, int nextDepartmentIndex)
+        public IDepartment GetDepartment(int stampIndex, int eraseIndex, int nextDepartmentIndex)
         {
             if (CheckBehavior(stampIndex, eraseIndex, nextDepartmentIndex) != true)
             {
                 throw new ArgumentException("One or more indexes out of range");
             }
-            FirstStampIndex = stampIndex;
-            FirstEraseIndex = eraseIndex;
-            FirstNextDepartmentIndex = nextDepartmentIndex;
-            firstCheck = true;
-            return this;
+
+            return new UnconditionalDepartment(stampIndex, eraseIndex, nextDepartmentIndex - 1);
         }
-        public DepartmentBuilder SetSecondBehavior(int stampIndex, int eraseIndex, int nextDepartmentIndex)
+
+        public IDepartment GetDepartment(int conditionIndex,
+            int firstStampIndex, int firstEraseIndex, int firstNextDepartmentIndex,
+            int secondStampIndex, int secondEraseIndex, int secondNextDepartmentIndex)
         {
-            if (CheckBehavior(stampIndex, eraseIndex, nextDepartmentIndex) != true)
+            if (!CheckBehavior(firstStampIndex, firstEraseIndex, firstNextDepartmentIndex) ||
+                !CheckBehavior(secondStampIndex, secondEraseIndex, secondNextDepartmentIndex) ||
+                conditionIndex < 0 || conditionIndex > NumberOfStamps)
             {
                 throw new ArgumentException("One or more indexes out of range");
             }
-            SecondStampIndex = stampIndex;
-            SecondEraseIndex = eraseIndex;
-            SecondNextDepartmentIndex = nextDepartmentIndex;
-            secondCheck = true;
-            return this;
-        }
 
-        public IDepartment GetDepartmentConfig()
-        {
-            if (ConditionIndex == -1 && firstCheck)
-            {
-                return new UnconditionalDepartment(FirstStampIndex, FirstEraseIndex, FirstNextDepartmentIndex);
-            }
-            else if (ConditionIndex != -1 && firstCheck && secondCheck)
-            {
-                return new ConditionalDepartment(ConditionIndex,
-                    FirstStampIndex, FirstEraseIndex, FirstNextDepartmentIndex,
-                    SecondStampIndex, SecondEraseIndex, SecondNextDepartmentIndex);
-            }
-            else
-            {
-                throw new InvalidOperationException("Building isn't completed correctly.");
-            }
-        }
-
-        public DepartmentBuilder Reset()
-        {
-            ConditionIndex = -1;
-
-            FirstStampIndex = FirstEraseIndex = FirstNextDepartmentIndex = -1;
-            SecondStampIndex = SecondEraseIndex = SecondNextDepartmentIndex = -1;
-
-            firstCheck = secondCheck = false;
-            return this;
+            return new ConditionalDepartment(conditionIndex,
+                firstStampIndex, firstEraseIndex, firstNextDepartmentIndex - 1,
+                secondStampIndex, secondEraseIndex, secondNextDepartmentIndex - 1);
         }
 
         private bool CheckBehavior(int stamp, int erase, int nextDepartment)

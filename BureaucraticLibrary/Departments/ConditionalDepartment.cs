@@ -11,7 +11,7 @@ namespace BureaucraticLibrary.Departments
         public int SecondStampIndex { get; }
         public int SecondEraseIndex { get; }
         public int SecondNextDepartmentIndex { get; }
-        public DepartmentStatus Status { get; internal set; }
+        public DepartmentStatus Status { get; set; }
 
         internal ConditionalDepartment(int conditionIndex,
             int firstStampIndex, int firstEraseIndex, int firstNextDepartmentIndex,
@@ -23,14 +23,14 @@ namespace BureaucraticLibrary.Departments
             FirstEraseIndex = firstEraseIndex;
             FirstNextDepartmentIndex = firstNextDepartmentIndex;
 
-            SecondStampIndex = SecondStampIndex;
-            SecondEraseIndex = SecondEraseIndex;
-            SecondNextDepartmentIndex = SecondNextDepartmentIndex;
+            SecondStampIndex = secondStampIndex;
+            SecondEraseIndex = secondEraseIndex;
+            SecondNextDepartmentIndex = secondNextDepartmentIndex;
         }
 
         public int ProcessChecklist(Checklist checklist)
         {
-            if (checklist.GetStamp(ConditionIndex))
+            if (!checklist.GetStamp(ConditionIndex))
             {
                 checklist.SetStamp(FirstStampIndex);
                 checklist.EraseStamp(FirstEraseIndex);

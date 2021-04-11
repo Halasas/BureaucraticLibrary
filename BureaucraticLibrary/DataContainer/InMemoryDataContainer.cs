@@ -10,14 +10,18 @@ namespace BureaucraticLibrary.DataContainer
     {
         private readonly int numberOfDepartments;
         private readonly List<IDepartment> _departments;
-        private readonly List<HashSet<Checklist>> _checklistContainer;
+        private readonly List<List<Checklist>> _checklistContainer;
 
         public InMemoryDataContainer(List<IDepartment> departments)
         {
             if (departments == null || departments.Contains(null))
                 throw new NullReferenceException("departments is null or contains null");
             numberOfDepartments = departments.Count;
-            _checklistContainer = new List<HashSet<Checklist>>(numberOfDepartments);
+            _checklistContainer = new List<List<Checklist>>();
+            for (int i = 0; i < numberOfDepartments; i++)
+            {
+                _checklistContainer.Add(new List<Checklist>());
+            }
             _departments = departments;
         }
 
@@ -40,15 +44,14 @@ namespace BureaucraticLibrary.DataContainer
             return _checklistContainer[departmentIndex].ToList();
         }
 
-        public Checklist GetSameChecklist(int departmentIndex, Checklist checklist)
+        public bool IsChecklistInCycle(int departmentIndex, Checklist checklist)
         {
             if (departmentIndex < 0 || departmentIndex > numberOfDepartments)
                 throw new ArgumentException("Wrong department index");
             if (checklist == null)
                 throw new NullReferenceException("Checklist is null");
-            Checklist res = null;
-            _checklistContainer[departmentIndex].TryGetValue(checklist, out res);
-            return res;
+            int i =_checklistContainer[departmentIndex].FindIndex(item => item.Equals(checklist));
+            return i != -1 && _checklistContainer[departmentIndex][i].InCycle;
         }
 
         public bool Contains(int departmentIndex, Checklist checklist)
@@ -57,7 +60,7 @@ namespace BureaucraticLibrary.DataContainer
                 throw new ArgumentException("Wrong department index");
             if (checklist == null)
                 throw new NullReferenceException("Checklist is null");
-            return _checklistContainer[departmentIndex].TryGetValue(checklist, out _);
+            return _checklistContainer[departmentIndex].Contains(checklist);
         }
 
         public void AddChecklist(int departmentIndex, Checklist checklist)

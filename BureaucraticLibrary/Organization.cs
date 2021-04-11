@@ -21,13 +21,11 @@ namespace BureaucraticLibrary
                 throw new ArgumentException("Config is not correct!");
             }
 
+            Normalize(config);
             var clonedDepartments = config.Departments.Select(item => item.Clone()).ToList();
             IDataContainer storage = null;
-            switch (config.StorageType)
+            switch (config.ContainerType)
             {
-                case DataContainerType.FileDataStorage:
-                    storage = new FileDataContainer(clonedDepartments);
-                    break;
                 case DataContainerType.InMemoryDataStorage:
                     storage = new InMemoryDataContainer(clonedDepartments);
                     break;
@@ -41,18 +39,25 @@ namespace BureaucraticLibrary
                     _solution = new PreCalculatingSolution(storage, config.StartDepartment, config.EndDepartment,
                         config.NumberOfDepartments, config.NumberOfStamps);
                     break;
-                case SolutionTypes.OnlineCashingSolution:
-                    _solution = new OnlineCashingSolution(storage, config.StartDepartment, config.EndDepartment,
-                        config.NumberOfDepartments, config.NumberOfStamps);
-                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        public DepartmentResult GetВуDepartmentStates(int departmentIndex)
+        private void Normalize(OrganizationConfig config)
         {
-            return new DepartmentResult(_solution.GetStatus(departmentIndex), _solution.GetChecklists(departmentIndex));
+            foreach (var department in config.Departments)
+            {
+                department.Status = DepartmentStatus.NotVisited;
+            }
+
+            config.StartDepartment--;
+            config.EndDepartment--;
+        }
+
+        public DepartmentResult GetResult(int departmentIndex)
+        {
+            return new DepartmentResult(_solution.GetStatus(departmentIndex - 1), _solution.GetChecklists(departmentIndex - 1));
         }
 
         private static bool CheckConfig(OrganizationConfig config)

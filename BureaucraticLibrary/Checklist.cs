@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace BureaucraticLibrary
 {
@@ -22,19 +25,24 @@ namespace BureaucraticLibrary
             InCycle = inCycle;
         }
 
+        public List<int> GetAllUncheckedStamps()
+        {
+            return Enumerable.Range(1, _checklist.Count).Where(i => _checklist[i - 1] == false).ToList();
+        }
+
         public bool GetStamp(int index)
         {
-            return _checklist[index];
+            return _checklist[index - 1];
         }
 
         public void SetStamp(int index)
         {
-            _checklist[index] = true;
+            _checklist[index - 1] = true;
         }
 
         public void EraseStamp(int index)
         {
-            _checklist[index] = false;
+            _checklist[index - 1] = false;
         }
 
         public IEnumerator GetEnumerator()
@@ -57,10 +65,11 @@ namespace BureaucraticLibrary
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             if (_checklist.Count != other._checklist.Count) return false;
-            if (GetHashCode() != other.GetHashCode()) return false;
-            foreach (bool b in _checklist.Xor(other._checklist))
+            if (GetHashCode() == other.GetHashCode()) return true;
+            for (int i = 0; i < _checklist.Count; i++)
             {
-                if (b) return false;
+                if (_checklist[i] != other._checklist[i])
+                    return false;
             }
             return true;
         }
@@ -75,7 +84,9 @@ namespace BureaucraticLibrary
 
         public override int GetHashCode()
         {
-            return (_checklist != null ? _checklist.GetHashCode() : 0);
+            bool[] bools = new bool[_checklist.Count];
+            _checklist.CopyTo(bools,0);
+            return (_checklist != null ? bools.GetHashCode() : 0);
         }
     }
 }

@@ -5,7 +5,7 @@
         public int StampIndex { get; }
         public int EraseIndex { get; }
         public int NextDepartmentIndex { get; }
-        public DepartmentStatus Status { get; internal set; }
+        public DepartmentStatus Status { get;  set; }
 
         internal UnconditionalDepartment(int stampIndex, int eraseIndex, int nextDepartmentIndex)
         {

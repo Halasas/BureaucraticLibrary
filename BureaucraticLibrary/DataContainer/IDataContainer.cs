@@ -4,12 +4,12 @@ using BureaucraticLibrary.Departments;
 
 namespace BureaucraticLibrary.DataContainer
 {
-    public enum DataContainerType { FileDataStorage, InMemoryDataStorage }
+    public enum DataContainerType { InMemoryDataStorage }
     internal interface IDataContainer
     {
         public IDepartment GetDepartment(int departmentIndex);
         public List<IDepartment> GetDepartments();
-        public Checklist GetSameChecklist(int departmentIndex, Checklist checklist);
+        public bool IsChecklistInCycle(int departmentIndex, Checklist checklist);
         public List<Checklist> GetChecklists(int departmentIndex);
         public bool Contains(int departmentIndex, Checklist checklist);
         public void AddChecklist(int departmentIndex, Checklist checklist);

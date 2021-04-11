@@ -4,7 +4,7 @@ using BureaucraticLibrary.Departments;
 
 namespace BureaucraticLibrary.Solutions
 {
-    public enum SolutionTypes { PreCalculatingSolution, OnlineCashingSolution }
+    public enum SolutionTypes { PreCalculatingSolution }
     internal interface ISolution
     {
         public int StartDepartment { get; }

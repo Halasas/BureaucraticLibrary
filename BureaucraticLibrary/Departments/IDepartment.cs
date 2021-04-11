@@ -4,7 +4,7 @@
 
     public interface IDepartment
     {
-        DepartmentStatus Status { get; internal set; }
+        DepartmentStatus Status { get; set; }
         /// <summary>
         /// Process checklist and return next department index.
         /// </summary>

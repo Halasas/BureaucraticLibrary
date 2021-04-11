@@ -8,8 +8,8 @@ namespace BureaucraticLibrary.Departments
         public List<Checklist> Checklists { get; }
         internal DepartmentResult(DepartmentStatus status, List<Checklist> checklists)
         {
-            status = Status;
-            checklists = Checklists;
+            Status = status;
+            Checklists = checklists;
         }
     }
 }
