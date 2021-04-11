@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using BureaucraticLibrary.DataStorage;
+using BureaucraticLibrary.DataContainer;
 using BureaucraticLibrary.Departments;
 
 namespace BureaucraticLibrary.Solutions

@@ -1,4 +1,6 @@
-﻿namespace BureaucraticLibrary.Departments
+﻿using System;
+
+namespace BureaucraticLibrary.Departments
 {
     public class ConditionalDepartment : IDepartment
     {
@@ -26,7 +28,6 @@
             SecondNextDepartmentIndex = SecondNextDepartmentIndex;
         }
 
-
         public int ProcessChecklist(Checklist checklist)
         {
             if (checklist.GetStamp(ConditionIndex))
@@ -41,6 +42,13 @@
                 checklist.EraseStamp(SecondEraseIndex);
                 return SecondNextDepartmentIndex;
             }
+        }
+
+        public IDepartment Clone()
+        {
+            return new ConditionalDepartment(ConditionIndex, 
+                FirstStampIndex, FirstEraseIndex, FirstNextDepartmentIndex,
+                SecondStampIndex, SecondEraseIndex, SecondNextDepartmentIndex);
         }
     }
 }

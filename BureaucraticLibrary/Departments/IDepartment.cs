@@ -4,12 +4,14 @@
 
     public interface IDepartment
     {
-        DepartmentStatus Status { get; }
+        DepartmentStatus Status { get; internal set; }
         /// <summary>
         /// Process checklist and return next department index.
         /// </summary>
         /// <param name="checklist"></param>
         /// <returns></returns>
-        internal int ProcessChecklist(Checklist checklist);
+        int ProcessChecklist(Checklist checklist);
+
+        IDepartment Clone();
     }
 }

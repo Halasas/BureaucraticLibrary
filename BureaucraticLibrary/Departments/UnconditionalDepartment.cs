@@ -20,5 +20,10 @@
             checklist.EraseStamp(EraseIndex);
             return NextDepartmentIndex;
         }
+
+        public IDepartment Clone()
+        {
+            return new UnconditionalDepartment(StampIndex, EraseIndex, NextDepartmentIndex);
+        }
     }
 }

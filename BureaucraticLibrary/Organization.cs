@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using BureaucraticLibrary.DataStorage;
+using System.Linq;
+using BureaucraticLibrary.DataContainer;
 using BureaucraticLibrary.Departments;
 using BureaucraticLibrary.Solutions;
 
@@ -20,14 +21,15 @@ namespace BureaucraticLibrary
                 throw new ArgumentException("Config is not correct!");
             }
 
-            IDataStorage storage = null;
+            var clonedDepartments = config.Departments.Select(item => item.Clone()).ToList();
+            IDataContainer storage = null;
             switch (config.StorageType)
             {
-                case DataStorageType.FileDataStorage:
-                    storage = new FileDataStorage();
+                case DataContainerType.FileDataStorage:
+                    storage = new FileDataContainer(clonedDepartments);
                     break;
-                case DataStorageType.InMemoryDataStorage:
-                    storage = new InMemoryDataStorage();
+                case DataContainerType.InMemoryDataStorage:
+                    storage = new InMemoryDataContainer(clonedDepartments);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -36,12 +38,12 @@ namespace BureaucraticLibrary
             switch (config.SolutionType)
             {
                 case SolutionTypes.PreCalculatingSolution:
-                    _solution = new PreCalculatingSolution(storage, config.Departments,
-                        config.StartDepartment, config.EndDepartment, config.NumberOfDepartments, config.NumberOfStamps);
+                    _solution = new PreCalculatingSolution(storage, config.StartDepartment, config.EndDepartment,
+                        config.NumberOfDepartments, config.NumberOfStamps);
                     break;
                 case SolutionTypes.OnlineCashingSolution:
-                    _solution = new OnlineCashingSolution(storage, config.Departments,
-                        config.StartDepartment, config.EndDepartment, config.NumberOfDepartments, config.NumberOfStamps);
+                    _solution = new OnlineCashingSolution(storage, config.StartDepartment, config.EndDepartment,
+                        config.NumberOfDepartments, config.NumberOfStamps);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
